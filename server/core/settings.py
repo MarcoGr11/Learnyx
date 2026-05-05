@@ -12,11 +12,13 @@ load_dotenv(BASE_DIR / '.env', override=True)
 # ── Security ──────────────────────────────────────────────────
 SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-insecure-key')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = [
-    h.strip()
-    for h in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
-    if h.strip()
-]
+_allowed_hosts_env = os.getenv('ALLOWED_HOSTS', '')
+if _allowed_hosts_env:
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_env.split(',') if h.strip()]
+elif DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+else:
+    ALLOWED_HOSTS = ['*']
 
 # ── Installed Apps ────────────────────────────────────────────
 INSTALLED_APPS = [
