@@ -21,3 +21,4 @@ django-cors-headers
 django-filter
 gunicorn==21.2.0
 whitenoise==6.8.2
+dj-database-url==2.3.0

@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import dj_database_url
 from datetime import timedelta
 
 # ── Base ──────────────────────────────────────────────────────
@@ -74,16 +75,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # ── Database (PostgreSQL) ─────────────────────────────────────
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql',
-        'NAME':     os.getenv('DATABASE_NAME', 'learnyx_db'),
-        'USER':     os.getenv('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'your_password'),
-        'HOST':     os.getenv('DATABASE_HOST', 'db'),
-        'PORT':     os.getenv('DATABASE_PORT', '5432'),
+# DATABASE_URL takes priority (set automatically by Railway Postgres plugin).
+# Falls back to individual vars for local Docker development.
+_db_url = os.getenv('DATABASE_URL')
+if _db_url:
+    DATABASES = {'default': dj_database_url.parse(_db_url, conn_max_age=600)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql',
+            'NAME':     os.getenv('DATABASE_NAME', 'learnyx_db'),
+            'USER':     os.getenv('DATABASE_USER', 'postgres'),
+            'PASSWORD': os.getenv('DATABASE_PASSWORD', 'your_password'),
+            'HOST':     os.getenv('DATABASE_HOST', 'db'),
+            'PORT':     os.getenv('DATABASE_PORT', '5432'),
+        }
     }
-}
 
 # ── DRF ───────────────────────────────────────────────────────
 REST_FRAMEWORK = {
